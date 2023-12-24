@@ -1,6 +1,7 @@
 import GameSavingLoader from './GameSavingLoader.js';
-import GameSavingLoaderAsync from './GameSavingLoaderAsync.js';
-
+import read from "./reader.js";
+import json from "./parser.js";
+import GameSaving from "./GameSaving.js";
 
 GameSavingLoader.load().then((saving) => {
   // saving объект класса GameSaving
@@ -9,12 +10,15 @@ GameSavingLoader.load().then((saving) => {
     console.log(error)
   });
 
-
-
 (async () => {
   try {
-    await GameSavingLoaderAsync.load()
-  } catch (e) {
+    const data = await read(); // возвращается Promise!
+    const value = await json(data); // возвращается Promise!
+    const parsing = JSON.parse(value)
+    const {id, created, userInfo} = parsing
+    const obj = new GameSaving(id, created, userInfo)
+    console.log(obj)
+  } catch(e) {
     console.log(e)
   }
 })();
